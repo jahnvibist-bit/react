@@ -1,3 +1,6 @@
+//npm create vite@latest form-app -- --template react
+//cd form-app
+//npm run dev
 import { useState } from "react";
 import "./App.css";
 
