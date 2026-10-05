@@ -1,0 +1,52 @@
+onst express=require("express")
+const {Server}=require("socket.io")
+const http=require("http")
+const app=express()
+app.use(express.static("public"))
+const server=http.createServer(app)
+const io= new Server(server)
+io.on("connection",(socket)=>{
+    console.log("User Connected")
+    socket.on("chat message",(msg)=>{
+        io.emit("chat message",(msg))
+    })
+    io.on("diconnect",()=>{
+        console.log("User Dicsonnected")
+    })
+})
+server.listen(3000,()=>console.log("Server Started"))
+
+
+//index.html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat App</title>
+</head>
+<body>
+  <h3>Chat</h3>
+  <div id="messages"></div>
+
+  <input id="input" placeholder="Type a message..." />
+  <button onclick="sendMessage()">Send</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io()
+    const name = prompt("Enter your name: ") || "Guest"
+    const input = document.getElementById("input")
+
+    function sendMessage() {
+      if (input.value.trim() == "") return
+      socket.emit("chat message", name + ": " + input.value)
+      input.value = ""
+    }
+
+    socket.on("chat message", (msg) => {
+      const p = document.createElement("p")
+      p.textContent = msg
+      document.getElementById("messages").appendChild(p)
+    })
+  </script>
+</body>
+</html>
